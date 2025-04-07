@@ -2,9 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Watson OSINT est un outil puissant pour rechercher des noms d'utilisateur sur de multiples plateformes en ligne. Il permet de détecter rapidement la présence d'un utilisateur sur différents sites web, réseaux sociaux et plateformes.
-
-## Fonctionnalités
+Watson is a powerful search engine for usernames on many platforms which allow you to add your own targets with automated scans and json reports. 
+## Functions
 
 - Search for usernames comprehensively (Response Status, Response Core, Response Time, XHR Calls, API, etc..)
 - Results in real-time, works well with the godsEye Project
