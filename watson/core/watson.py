@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 import argparse
 import os
 from googleapiclient.discovery import build
-
+import sys
 # Vérifier que le répertoire ressources existe
 if not os.path.exists("ressources"):
     os.makedirs("ressources")
@@ -1170,7 +1170,7 @@ class Watson:
     def _load_browsers(self):
         """Charge les configurations des navigateurs depuis le fichier JSON"""
         try:
-            with open('ressources/browsers.json', 'r') as f:
+            with open('watson/ressources/browsers.json', 'r') as f:
                 data = json.load(f)
                 return data['browsers']
         except Exception as e:
@@ -1273,7 +1273,7 @@ class Watson:
         
         # Charger les sites principaux
         try:
-            with open('ressources/sites.json', 'r') as f:
+            with open('watson/ressources/sites.json', 'r') as f:
                 data = json.load(f)
                 sites.update(data['sites'])
         except Exception as e:
@@ -1282,7 +1282,7 @@ class Watson:
         # Charger les sites utilisateur s'ils existent (sauf si --without-config est spécifié)
         if not self.without_user_config:
             try:
-                user_sites_path = 'userConfig/user_sites.json'
+                user_sites_path = 'watson/userConfig/user_sites.json'
                 if os.path.exists(user_sites_path):
                     with open(user_sites_path, 'r') as f:
                         user_data = json.load(f)
@@ -1344,12 +1344,12 @@ def add_user_site():
     print(f"\n{Fore.CYAN}{Style.BRIGHT}=== Configuration de site personnalisé ==={Style.RESET_ALL}\n")
     
     # Vérifier l'existence du dossier userConfig
-    if not os.path.exists('userConfig'):
-        os.makedirs('userConfig')
+    if not os.path.exists('watson/userConfig'):
+        os.makedirs('watson/userConfig')
     
     # Charger les sites existants
     user_sites = {}
-    user_sites_path = 'userConfig/user_sites.json'
+    user_sites_path = 'watson/userConfig/user_sites.json'
     if os.path.exists(user_sites_path):
         try:
             with open(user_sites_path, 'r') as f:
@@ -1397,7 +1397,7 @@ def add_user_site():
     # Récupérer les catégories existantes si possible
     categories = set()
     try:
-        with open('ressources/sites.json', 'r') as f:
+        with open('watson/ressources/sites.json', 'r') as f:
             data = json.load(f)
             for site_data in data['sites'].values():
                 categories.add(site_data['category'])
@@ -1440,7 +1440,7 @@ def delete_user_site():
     print(f"\n{Fore.CYAN}{Style.BRIGHT}=== Suppression de site personnalisé ==={Style.RESET_ALL}\n")
     
     # Vérifier l'existence du fichier de configuration utilisateur
-    user_sites_path = 'userConfig/user_sites.json'
+    user_sites_path = 'watson/userConfig/user_sites.json'
     if not os.path.exists(user_sites_path):
         print(f"{Fore.RED}Erreur: Aucun fichier de configuration utilisateur trouvé.{Style.RESET_ALL}")
         return
@@ -1502,12 +1502,12 @@ def delete_user_site():
 
 def configure_api_key(api_type, api_key):
     """Configure une clé API dans le fichier apikeys.json"""
-    api_file_path = "ressources/apikeys.json"
+    api_file_path = "watson/ressources/apikeys.json"
     
     # Vérifier si le dossier ressources existe
-    if not os.path.exists("ressources"):
+    if not os.path.exists("watson/ressources"):
         try:
-            os.makedirs("ressources")
+            os.makedirs("watson/ressources")
             print(f"{Fore.GREEN}Répertoire 'ressources' créé avec succès.{Style.RESET_ALL}")
         except Exception as e:
             print(f"{Fore.RED}Erreur lors de la création du répertoire 'ressources': {str(e)}{Style.RESET_ALL}")
@@ -1568,181 +1568,256 @@ def configure_api_key(api_type, api_key):
     
     return True
 
-if __name__ == "__main__":
-    import sys
-    import argparse
-    import os
+# Créer une fonction main() à la fin du fichier
+def main():
+    """Point d'entrée principal pour le package Watson OSINT"""
+    # Initialiser colorama
+    init()
     
-    # Créer un parser d'arguments
-    parser = argparse.ArgumentParser(description="WATSON - Comprehensive Search Engine")
+    # Créer le parseur d'arguments
+    parser = argparse.ArgumentParser(description="Watson OSINT - Multi-plateforme username checker")
     parser.add_argument("username", nargs="?", help="just type the username you want to check")
     parser.add_argument("--final-logs", action="store_true", help="Display final detailed logs")
     parser.add_argument("--json", action="store_true", help="Generate JSON output instead of text")
     parser.add_argument("--config-site", action="store_true", help="Add a custom site to user configuration")
     parser.add_argument("--config-site-del", action="store_true", help="Delete a custom site from user configuration")
-    parser.add_argument("--without-config", action="store_true", help="Use only the base configuration (sites.json)")
-    parser.add_argument("-p", "--positive", action="store_true", help="Show only positive results (where username exists)")
-    parser.add_argument("--api-config", nargs=2, metavar=("API_TYPE", "API_KEY"), 
-                        help="Configure API keys. Currently supported: YOUTUBE. Example: --api-config YOUTUBE your_api_key")
-    parser.add_argument("--buster", action="store_true", help="Utiliser miniBuster pour tester des chemins sur une liste d'URLs")
-    parser.add_argument("--speed", choices=["slow", "fast"], default="fast", help="Vitesse d'exécution de miniBuster (slow ou fast)")
-    parser.add_argument("-f", "--file", help="Fichier contenant la liste des URLs pour miniBuster")
-    
-    # Parser les arguments de la ligne de commande
+    parser.add_argument("--config-apikey", action="store_true", help="Configure API Key for advanced features")
+    parser.add_argument("--positive", action="store_true", help="Display only existing accounts")
+    parser.add_argument("--buster", action="store_true", help="Use miniBuster to check additional URLs")
+    parser.add_argument("--speed", choices=["slow", "fast"], default="fast", help="Speed option for miniBuster (slow or fast, default: fast)")
+    parser.add_argument("-f", "--file", help="Path to URL list file for miniBuster")
     args = parser.parse_args()
     
-    # Si l'option de configuration d'API est choisie
-    if args.api_config:
-        api_type, api_key = args.api_config
-        if configure_api_key(api_type, api_key):
-            print(f"{Fore.GREEN}Configuration de l'API réussie. Vous pouvez maintenant utiliser cette fonctionnalité.{Style.RESET_ALL}")
-            sys.exit(0)
-        else:
-            print(f"{Fore.RED}Échec de la configuration de l'API. Veuillez vérifier vos paramètres et réessayer.{Style.RESET_ALL}")
-            sys.exit(1)
-    
-    # Si l'option buster est activée
-    if args.buster:
-        if not args.username:
-            print(f"{Fore.RED}Erreur: Un nom d'utilisateur est requis pour utiliser miniBuster.{Style.RESET_ALL}")
-            sys.exit(1)
-        
-        if not args.file:
-            print(f"{Fore.RED}Erreur: Un fichier d'URLs (-f ou --file) est requis pour utiliser miniBuster.{Style.RESET_ALL}")
-            sys.exit(1)
-        
-        # Vérifier que le fichier d'URLs existe
-        if not os.path.exists(args.file):
-            print(f"{Fore.RED}Erreur: Le fichier d'URLs '{args.file}' n'existe pas.{Style.RESET_ALL}")
-            sys.exit(1)
-        
-        # Vérifier que miniBuster.py existe dans le dossier userConfig
-        minibuster_path = os.path.join('userConfig', 'miniBuster.py')
-        if not os.path.exists(minibuster_path):
-            print(f"{Fore.RED}Erreur: Le fichier miniBuster.py n'a pas été trouvé dans le dossier userConfig.{Style.RESET_ALL}")
-            sys.exit(1)
-        
-        try:
-            # Préparer la commande pour exécuter miniBuster
-            print(f"{Fore.CYAN}Lancement de miniBuster pour l'utilisateur {args.username} avec la vitesse '{args.speed}'...{Style.RESET_ALL}")
-            
-            # Importer miniBuster et exécuter sa fonction principale
-            sys.path.append('userConfig')
-            from userConfig.miniBuster import main as minibuster_main
-            
-            # Définir les variables nécessaires pour miniBuster
-            import userConfig.miniBuster as minibuster
-            minibuster.username = args.username
-            minibuster.url_list_file = args.file
-            minibuster.speed_option = args.speed
-            
-            # Exécuter miniBuster
-            minibuster_main()
-            
-            sys.exit(0)
-        except Exception as e:
-            print(f"{Fore.RED}Erreur lors de l'exécution de miniBuster: {str(e)}{Style.RESET_ALL}")
-            sys.exit(1)
-    
-    # Si l'option de configuration de site est choisie
+    # Gérer les options de configuration
     if args.config_site:
         add_user_site()
-        sys.exit(0)
+        return
     
-    # Si l'option de suppression de site est choisie
     if args.config_site_del:
         delete_user_site()
-        sys.exit(0)
+        return
     
-    # Obtenir le nom d'utilisateur
-    if args.username:
-        username = args.username
-    else:
-        username = input("Username to search : ")
+    if args.config_apikey:
+        if not args.username:
+            print(f"{Fore.RED}Error: You must specify an API type (youtube, twitter, etc.){Style.RESET_ALL}")
+            return
+        if len(sys.argv) < 3:
+            print(f"{Fore.RED}Error: You must specify the API key{Style.RESET_ALL}")
+            return
+        api_type = args.username
+        api_key = sys.argv[2]
+        configure_api_key(api_type, api_key)
+        return
     
-    # Si la sortie JSON est demandée, ne pas afficher le logo
-    if not args.json:
-        watson_ascii = """
-██╗    ██╗ █████╗ ████████╗███████╗ ██████╗ ███╗   ██╗
-██║    ██║██╔══██╗╚══██╔══╝██╔════╝██╔═══██╗████╗  ██║
-██║ █╗ ██║███████║   ██║   ███████╗██║   ██║██╔██╗ ██║
-██║███╗██║██╔══██║   ██║   ╚════██║██║   ██║██║╚██╗██║
-╚███╔███╔╝██║  ██║   ██║   ███████║╚██████╔╝██║ ╚████║
- ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝ Made by margoul1
-"""
-        # Affichage dynamique du logo avec rotation des couleurs
-        print(f"{Fore.YELLOW}{Style.BRIGHT}" + watson_ascii + f"{Style.RESET_ALL}")
+    # Vérifier si un nom d'utilisateur a été fourni
+    if not args.username:
+        parser.print_help()
+        return
     
-    # Vérifier avec les fonctions existantes
-    results = check_username_exists(username, args.positive)
+    username = args.username
     
-    # Créer des dictionnaires pour stocker les résultats pour la sortie JSON
-    all_results = {
-        "username": username,
-        "direct_checks": {},
-        "watson_checks": {}
-    }
+    # Afficher le logo et les informations de démarrage
+    print(f"{Fore.GREEN}{Style.BRIGHT}")
+    print(" _       __      __                   ")
+    print("| |     / /___ _/ /________  ____    ")
+    print("| | /| / / __ `/ __/ ___/ / / / _ \\ ")
+    print("| |/ |/ / /_/ / /_(__  ) /_/ /  __/  ")
+    print("|__/|__/\\__,_/\\__/____/\\__,_/\\___/ ")
+    print(f"{Style.RESET_ALL}")
+    print(f"{Fore.WHITE}{Style.BRIGHT}[+] Watson v0.1 - GodEyes OSINT Team{Style.RESET_ALL}")
     
-    # Stocker les résultats pour la sortie JSON si nécessaire
-    for platform, result in results.items():
-        all_results["direct_checks"][platform] = {
-            "exists": result.get("exists"),
-            "url": result.get("url"),
-            "message": result.get("message"),
-            "error": result.get("error") if "error" in result else None
-        }
+    # Vérification avec check_username_exists pour les services spécifiques
+    check_username_exists(username, args.positive)
     
-    # Supprimer l'affichage en double des résultats directs puisqu'ils sont maintenant affichés en temps réel
-    # if not args.json:
-    #    if result.get("exists") == True:
-    #        print(f"{Fore.GREEN}{Style.BRIGHT}{username} is on {Fore.YELLOW}{Style.BRIGHT}{platform.upper()} {Fore.LIGHTBLUE_EX}{Style.BRIGHT} -> {Fore.WHITE}{Style.BRIGHT}{result.get('message')} on {result.get('url')}{Style.RESET_ALL}")
-    #    elif result.get("exists") == False:
-    #        print(f"{Fore.RED}{Style.BRIGHT}{username} is not on {Fore.YELLOW}{Style.BRIGHT}{platform.upper()}{Style.RESET_ALL}")
-    #    else:
-    #        print(f"{Fore.WHITE}{Style.BRIGHT}{username} status unknown on {Fore.YELLOW}{Style.BRIGHT}{platform.upper()}{Style.RESET_ALL}")
-    #    if "error" in result:
-    #        print(f"{Fore.RED}{Style.BRIGHT}[ERROR] {result.get('error')}{Style.RESET_ALL}")
+    # Utiliser la vérification complète avec le moteur Watson
+    watson = Watson()
+    # Définir l'attribut positive_only pour Watson
+    watson.positive_only = args.positive
     
-    # Vérifier avec la classe Watson, en tenant compte de l'option --without-config
-    watson = Watson(without_user_config=args.without_config)
-    
-    # Si l'option --positive est activée, configurer Watson pour n'afficher que les résultats positifs
-    if args.positive:
-        watson.positive_only = True
-    
-    # Si l'option --without-config est activée, afficher un message informatif
-    if args.without_config and not args.json:
-        print(f"\n{Fore.CYAN}{Style.BRIGHT}[INFO] Mode sans configuration utilisateur activé. Seule la configuration de base est utilisée.{Style.RESET_ALL}")
-    
-    # Créer une version modifiée de _display_result pour le mode JSON
-    if args.json:
-        # Sauvegarder la méthode originale
-        original_display_result = watson._display_result
-        # Remplacer par une version qui collecte les données sans affichage
-        def json_collect_result(self, username, result):
-            category = result.get('category')
-            name = result.get('name')
-            
-            if category not in all_results["watson_checks"]:
-                all_results["watson_checks"][category] = {}
-                
-            all_results["watson_checks"][category][name] = {
-                "exists": result.get('exists'),
-                "url": result.get('url'),
-                "message": result.get('message'),
-                "browser": result.get('browser'),
-                "error": result.get('error') if 'error' in result else None
-            }
-            
-        # Appliquer la méthode modifiée temporairement
-        watson._display_result = json_collect_result.__get__(watson, Watson)
-    
-    # Exécuter les vérifications
+    # Continuer avec la vérification Watson standard
     watson_results = watson.check_username(username)
     
-    # Si en mode JSON, restaurer la méthode originale
-    if args.json:
-        watson._display_result = original_display_result
+    # Si miniBuster est demandé
+    if args.buster:
+        if not args.file:
+            print(f"{Fore.RED}Error: You must specify a URL list file with -f when using --buster{Style.RESET_ALL}")
+        else:
+            print(f"\n{Fore.CYAN}{Style.BRIGHT}=== Running MiniBuster ==={Style.RESET_ALL}")
+            
+            # Déterminer le chemin absolu du fichier d'URLs
+            if not os.path.isabs(args.file):
+                # Si c'est un chemin relatif, le convertir en chemin absolu
+                file_path = os.path.abspath(args.file)
+            else:
+                file_path = args.file
+            
+            # Vérifier que le fichier existe
+            if not os.path.exists(file_path):
+                print(f"{Fore.RED}Error: URL list file not found at {file_path}{Style.RESET_ALL}")
+                return
+            
+            # Lire le fichier d'URLs
+            try:
+                with open(file_path, 'r') as f:
+                    urls = [line.strip() for line in f if line.strip()]
+                
+                # Afficher les informations
+                print(f"{Fore.CYAN}[*] Testing paths for {username} on multiple URLs{Style.RESET_ALL}")
+                print(f"{Fore.CYAN}[*] Mode de vitesse: {args.speed}{Style.RESET_ALL}")
+                
+                # Créer un dossier pour les logs s'il n'existe pas
+                if not os.path.exists('logs'):
+                    os.makedirs('logs')
+                
+                # Définir les chemins possibles à tester
+                paths = [
+                    f"/users/{username}",
+                    f"/user/{username}",
+                    f"/profile/{username}",
+                    f"/account/{username}",
+                    f"/settings/{username}",
+                    f"/dashboard/{username}",
+                    f"/people/{username}",
+                    f"/@{username}",
+                    f"/users/@{username}",
+                    f"/user/@{username}",
+                    f"/profile/@{username}",
+                    f"/account/@{username}",
+                    f"/settings/@{username}",
+                    f"/dashboard/@{username}",
+                    f"/people/@{username}",
+                    f"/{username}",
+                    f"/u/{username}",
+                    f"/p/{username}",
+                    f"/a/{username}",
+                    f"/s/{username}",
+                    f"/d/{username}",
+                    f"/member/{username}",
+                    f"/members/{username}",
+                    f"/profile.php?user={username}",
+                    f"/user.php?name={username}",
+                    f"/profile.php?username={username}",
+                    f"/user.php?username={username}",
+                    f"/profile.php?id={username}",
+                    f"/user.php?id={username}",
+                    f"/profile/{username}/",
+                    f"/user/{username}/",
+                    f"/account/{username}/",
+                    f"/settings/{username}/",
+                    f"/dashboard/{username}/",
+                    f"/people/{username}/",
+                    f"/@{username}/",
+                    f"/users/@{username}/",
+                    f"/user/@{username}/",
+                    f"/profile/@{username}/",
+                    f"/account/@{username}/",
+                    f"/settings/@{username}/",
+                    f"/dashboard/@{username}/",
+                    f"/people/@{username}/",
+                    f"/{username}/",
+                    f"/u/{username}/",
+                    f"/p/{username}/",
+                    f"/a/{username}/",
+                    f"/s/{username}/",
+                    f"/d/{username}/",
+                    f"/member/{username}/",
+                    f"/members/{username}/",
+                    f"/admin/{username}",
+                    f"/admin/@{username}",
+                    f"/admin/{username}/",
+                    f"/admin/@{username}/",
+                    f"/mod/{username}",
+                    f"/mod/@{username}",
+                    f"/mod/{username}/",
+                    f"/mod/@{username}/",
+                    f"/staff/{username}",
+                    f"/staff/@{username}",
+                    f"/staff/{username}/",
+                    f"/staff/@{username}/",
+                    f"/view/{username}",
+                    f"/view/@{username}",
+                    f"/view/{username}/",
+                    f"/view/@{username}/",
+                    f"/show/{username}",
+                    f"/show/@{username}",
+                    f"/show/{username}/",
+                    f"/show/@{username}/",
+                    f"/public/{username}",
+                    f"/public/@{username}",
+                    f"/public/{username}/",
+                    f"/public/@{username}/",
+                    f"/private/{username}",
+                    f"/private/@{username}",
+                    f"/private/{username}/",
+                    f"/private/@{username}/",
+                    f"/home/{username}",
+                    f"/home/@{username}",
+                    f"/home/{username}/",
+                    f"/home/@{username}/",
+                    f"/page/{username}",
+                    f"/page/@{username}",
+                    f"/page/{username}/",
+                    f"/page/@{username}/",
+                    f"/info/{username}",
+                    f"/info/@{username}",
+                    f"/info/{username}/",
+                    f"/info/@{username}/",
+                    f"/details/{username}",
+                    f"/details/@{username}",
+                    f"/details/{username}/",
+                    f"/details/@{username}/",
+                    f"/about/{username}",
+                    f"/about/@{username}",
+                    f"/about/{username}/",
+                    f"/about/@{username}/",
+                    f"/me/{username}",
+                    f"/me/@{username}",
+                    f"/me/{username}/",
+                    f"/me/@{username}/"
+                ]
+                
+                # Définir l'en-tête HTTP
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                    'Accept-Language': 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                }
+                
+                # Pour chaque URL, tester les chemins
+                for url in urls:
+                    print(f"\n{Fore.YELLOW}[*] Testing URL: {url}{Style.RESET_ALL}")
+                    for path in paths:
+                        # Déterminer l'URL complète à tester
+                        full_url = f"{url.rstrip('/')}{path}"
+                        
+                        try:
+                            # Ajouter un délai pour éviter d'être bloqué
+                            if args.speed == "slow":
+                                time.sleep(random.uniform(0.5, 1.0))
+                            else:
+                                time.sleep(random.uniform(0.1, 0.3))
+                                
+                            # Envoyer la requête et mesurer le temps de réponse
+                            start_time = time.time()
+                            response = requests.get(full_url, headers=headers, timeout=10, allow_redirects=True)
+                            elapsed_time = time.time() - start_time
+                            status = response.status_code
+                            
+                            # Analyser la réponse
+                            if status == 200:
+                                print(f"{Fore.GREEN}[+] {full_url} - Status: {status} - Time: {elapsed_time:.3f}s{Style.RESET_ALL}")
+                            elif status in [301, 302, 303, 307, 308]:
+                                print(f"{Fore.YELLOW}[>] {full_url} - Status: {status} - Time: {elapsed_time:.3f}s -> {response.headers.get('Location', 'No redirect location')}{Style.RESET_ALL}")
+                            else:
+                                print(f"{Fore.RED}[-] {full_url} - Status: {status} - Time: {elapsed_time:.3f}s{Style.RESET_ALL}")
+                                
+                        except requests.RequestException as e:
+                            print(f"{Fore.RED}[!] {full_url} - Error: {str(e)}{Style.RESET_ALL}")
+                
+                print(f"\n{Fore.CYAN}[*] Test terminé.{Style.RESET_ALL}")
+                
+            except Exception as e:
+                print(f"{Fore.RED}Error executing MiniBuster: {str(e)}{Style.RESET_ALL}")
     
     # Afficher le rapport final uniquement si l'option est activée
     if args.final_logs and not args.json:
@@ -1764,23 +1839,23 @@ if __name__ == "__main__":
     if args.json:
         import json as json_lib
         # Générer et afficher le JSON
-        json_output = json_lib.dumps(all_results, indent=2)
-        print(json_output)
-    else:
-        # Afficher la section des sites intéressants que Watson ne peut pas atteindre
-        print(f"\n{Fore.CYAN}{Style.BRIGHT}=== Interesting websites Watson (and any other tools even if they say it) can't reach ==={Style.RESET_ALL}")
-        interesting_sites = [
-            {"name": "PyPi", "url": "https://pypi.org/user/{}", "reason": "Anti-Bot to fat"},
-            {"name": "X", "url": "https://x.com/{}", "reason": "Anti-Bot to fat"},
-            {"name": "Steam Community Groups", "url": "https://steamcommunity.com/groups/{}", "reason": "Anti-Bot to fat"},
-            {"name": "Steam Community ID", "url": "https://steamcommunity.com/id/{}", "reason": "Anti-Bot to fat"},
-            {"name": "Soloby", "url": "http://www.soloby.ru/user/{}", "reason": "Anti-Bot to fat"}
-        ]
-        
-        for site in interesting_sites:
-            print(f"{Fore.YELLOW}{Style.BRIGHT}• {site['name']} {Fore.WHITE}{Style.BRIGHT}({site['reason']}){Style.RESET_ALL}")
+        print(json_lib.dumps(watson_results, indent=4))
+    
+    # Afficher la section des sites intéressants que Watson ne peut pas atteindre
+    print(f"\n{Fore.CYAN}{Style.BRIGHT}=== Interesting websites Watson (and any other tools even if they say it) can't reach ==={Style.RESET_ALL}")
+    interesting_sites = [
+        {"name": "PyPi", "url": "https://pypi.org/user/{}", "reason": "Anti-Bot to fat"},
+        {"name": "X", "url": "https://x.com/{}", "reason": "Anti-Bot to fat"},
+        {"name": "Steam Community Groups", "url": "https://steamcommunity.com/groups/{}", "reason": "Anti-Bot to fat"},
+        {"name": "Steam Community ID", "url": "https://steamcommunity.com/id/{}", "reason": "Anti-Bot to fat"},
+        {"name": "Soloby", "url": "http://www.soloby.ru/user/{}", "reason": "Anti-Bot to fat"}
+    ]
+    
+    for site in interesting_sites:
+        print(f"{Fore.YELLOW}{Style.BRIGHT}• {site['name']} {Fore.WHITE}{Style.BRIGHT}({site['reason']}){Style.RESET_ALL}")
 
-        got_watsonned_ascii = """
+    # N'afficher l'art ASCII qu'une seule fois, à la fin (sorti de la boucle)
+    got_watsonned_ascii = """
   ▄████  ▒█████  ▄▄▄█████▓    █     █░ ▄▄▄     ▄▄▄█████▓  ██████  ▒█████   ███▄    █  ███▄    █ ▓█████ ▓█████▄ 
  ██▒ ▀█▒▒██▒  ██▒▓  ██▒ ▓▒   ▓█░ █ ░█░▒████▄   ▓  ██▒ ▓▒▒██    ▒ ▒██▒  ██▒ ██ ▀█   █  ██ ▀█   █ ▓█   ▀ ▒██▀ ██▌
 ▒██░▄▄▄░▒██░  ██▒▒ ▓██░ ▒░   ▒█░ █ ░█ ▒██  ▀█▄ ▒ ▓██░ ▒░░ ▓██▄   ▒██░  ██▒▓██  ▀█ ██▒▓██  ▀█ ██▒▒███   ░██   █▌
@@ -1792,5 +1867,5 @@ if __name__ == "__main__":
       ░     ░ ░                  ░          ░  ░              ░      ░ ░           ░          ░    ░  ░   ░    
                                                                                                         ░      
 """
-        # Affichage dynamique du logo avec rotation des couleurs
-        print(f"{Fore.YELLOW}{Style.BRIGHT}" + got_watsonned_ascii + f"{Style.RESET_ALL}")
+    # Affichage dynamique du logo avec rotation des couleurs
+    print(f"{Fore.YELLOW}{Style.BRIGHT}" + got_watsonned_ascii + f"{Style.RESET_ALL}")

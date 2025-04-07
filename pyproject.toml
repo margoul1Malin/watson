@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "watson-osint"
+version = "0.1.1"
+description = "Watson OSINT - Un outil puissant pour rechercher des noms d'utilisateur sur de multiples plateformes"
+readme = "README.md"
+authors = [
+    {name = "margoul1", email = "votre.email@example.com"}
+]
+license = {file = "LICENSE"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Security",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+keywords = ["osint", "username", "search", "social media", "investigation"]
+dependencies = [
+    "requests",
+    "colorama",
+    "beautifulsoup4",
+    "fake_useragent",
+    "dnspython",
+    "google-api-python-client",
+    "cloudscraper",
+    "urllib3",
+]
+requires-python = ">=3.6"
+
+[project.urls]
+"Homepage" = "https://github.com/margoul1/watson"
+"Bug Tracker" = "https://github.com/margoul1/watson/issues"
+
+[project.scripts]
+watson = "watson.__main__:main"

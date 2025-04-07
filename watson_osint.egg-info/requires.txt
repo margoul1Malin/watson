@@ -1,0 +1,8 @@
+requests
+colorama
+beautifulsoup4
+fake_useragent
+dnspython
+google-api-python-client
+cloudscraper
+urllib3

@@ -1,0 +1,10 @@
+include LICENSE
+include README.md
+include pyproject.toml
+recursive-include watson/ressources *.json
+recursive-include watson/userConfig *.json
+recursive-include watson/utils *.py
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude *.so
+global-exclude .DS_Store

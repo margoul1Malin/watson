@@ -1,0 +1,2 @@
+[console_scripts]
+watson = watson.__main__:main
