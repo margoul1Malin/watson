@@ -1,4 +1,4 @@
-# Watson OSINT
+# Watson
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -13,8 +13,9 @@ Watson is a powerful search engine for usernames on many platforms which allow y
 ## Installation
 
 ```bash
-pip install watson-osint
+pip install watson-osint 
 ```
+All versions before 0.1.8 are deprecated.
 
 Clone git repository : 
 
@@ -57,7 +58,7 @@ watson johndoe --positive
 
 Get a json report : 
 ```bash
-watson johndoe --json > resultats.json
+watson johndoe --json > results.json
 ```
 
 Configure Youtube API :
