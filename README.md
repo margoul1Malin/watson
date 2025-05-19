@@ -75,6 +75,6 @@ watson --buster --speed fast -f path/to/urls.txt johndoe
 
 This projects is under MIT License - show [LICENSE](LICENSE) for more details.
 
-## Auteur
+## Author
 
-Developped by [margoul1](https://github.com/margoul1)
+Developped by [margoul1](https://github.com/margoul1Malin)
