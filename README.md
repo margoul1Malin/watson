@@ -19,7 +19,7 @@ pip install watson-osint
 Clone git repository : 
 
 ```bash
-git clone https://github.com/margoul1/watson.git
+git clone https://github.com/margoul1Malin/watson.git
 cd watson
 pip install -e .
 ```
