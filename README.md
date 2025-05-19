@@ -44,7 +44,7 @@ watson username
 - '--buster' : Use miniBuster who's able to scan for subdomain and bruteforce all usernames's relative path on a target.
 - '--speed' : miniBuster's speed (slow | fast)
 - '-f' : Path file to your urls.txt for miniBuster (he's able to scan a list of urls but it might take longer time)
-### Exemples
+### Examples
 
 Simple search : 
 ```bash
