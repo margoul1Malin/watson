@@ -1,0 +1,12 @@
+{
+    "sites": {
+        "https://google.com/{}": {
+            "name": "Google",
+            "error": {
+                "response_text": "isn't here boi"
+            },
+            "category": "6",
+            "message": "Kouki"
+        }
+    }
+}

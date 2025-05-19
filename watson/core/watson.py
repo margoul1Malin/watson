@@ -10,14 +10,39 @@ from queue import Queue
 from concurrent.futures import ThreadPoolExecutor
 import argparse
 import os
-from googleapiclient.discovery import build
 import sys
+from googleapiclient.discovery import build
+import importlib.resources
+from pathlib import Path
+
+# Obtenir les chemins des ressources de manière fiable
+def get_resource_path(relative_path):
+    """Obtient le chemin absolu d'un fichier de ressources, que ce soit en développement ou installé via pip"""
+    try:
+        # D'abord essayer de localiser le package de base
+        package_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        
+        # Construire le chemin absolu
+        absolute_path = os.path.join(package_root, relative_path)
+        
+        # Si le chemin n'existe pas, chercher dans le répertoire parent (pour le développement)
+        if not os.path.exists(absolute_path):
+            parent_dir = os.path.dirname(package_root)
+            absolute_path = os.path.join(parent_dir, relative_path)
+            
+        return absolute_path
+    except Exception as e:
+        print(f"{Fore.YELLOW}Attention: Problème lors de la recherche du chemin des ressources: {str(e)}.{Style.RESET_ALL}")
+        # Retour au chemin relatif simple en dernier recours
+        return relative_path
+
 # Vérifier que le répertoire ressources existe
-if not os.path.exists("ressources"):
-    os.makedirs("ressources")
+resource_dir = get_resource_path('ressources')
+if not os.path.exists(resource_dir):
+    os.makedirs(resource_dir)
     print(f"{Fore.YELLOW}Répertoire 'ressources' créé.{Style.RESET_ALL}")
 
-api_file_path = "ressources/apikeys.json"
+api_file_path = get_resource_path('ressources/apikeys.json')
 
 # Initialiser la variable yt_apikey avec une valeur par défaut
 yt_apikey = None
@@ -1170,7 +1195,8 @@ class Watson:
     def _load_browsers(self):
         """Charge les configurations des navigateurs depuis le fichier JSON"""
         try:
-            with open('watson/ressources/browsers.json', 'r') as f:
+            browsers_file_path = get_resource_path('ressources/browsers.json')
+            with open(browsers_file_path, 'r') as f:
                 data = json.load(f)
                 return data['browsers']
         except Exception as e:
@@ -1273,7 +1299,8 @@ class Watson:
         
         # Charger les sites principaux
         try:
-            with open('watson/ressources/sites.json', 'r') as f:
+            sites_file_path = get_resource_path('ressources/sites.json')
+            with open(sites_file_path, 'r') as f:
                 data = json.load(f)
                 sites.update(data['sites'])
         except Exception as e:
@@ -1282,7 +1309,7 @@ class Watson:
         # Charger les sites utilisateur s'ils existent (sauf si --without-config est spécifié)
         if not self.without_user_config:
             try:
-                user_sites_path = 'watson/userConfig/user_sites.json'
+                user_sites_path = get_resource_path('userConfig/user_sites.json')
                 if os.path.exists(user_sites_path):
                     with open(user_sites_path, 'r') as f:
                         user_data = json.load(f)
@@ -1368,36 +1395,37 @@ def add_user_site():
         user_sites = {'sites': {}}
     
     # Demander les informations du site
-    site_url = input(f"{Fore.YELLOW}URL du site (utilisez {{}} pour l'emplacement du nom d'utilisateur) : {Style.RESET_ALL}")
+    site_url = input(f"{Fore.YELLOW}Site URL (use {{}}, here watson will check for the username (eg: https://google.com/users/{{}})) : {Style.RESET_ALL}")
     
     # Vérification de base de l'URL
     if not site_url or '{}' not in site_url:
-        print(f"{Fore.RED}Erreur: L'URL doit contenir {{}} pour indiquer où le nom d'utilisateur sera inséré.{Style.RESET_ALL}")
+        print(f"{Fore.RED}Error: URL has to contain {{}} to be used by watson {Style.RESET_ALL}")
         return
     
-    site_name = input(f"{Fore.YELLOW}Nom du site : {Style.RESET_ALL}")
+    site_name = input(f"{Fore.YELLOW}Site Name{Style.RESET_ALL}")
     if not site_name:
-        print(f"{Fore.RED}Erreur: Le nom du site est requis.{Style.RESET_ALL}")
+        print(f"{Fore.RED}Site Name Required{Style.RESET_ALL}")
         return
     
-    print(f"\n{Fore.CYAN}Type d'erreur:{Style.RESET_ALL}")
-    print(f"{Fore.BLUE}1. Code HTTP (défaut: 200 = existe, autres = n'existe pas)")
-    print(f"2. Texte spécifique dans la réponse{Style.RESET_ALL}")
-    error_type = input(f"{Fore.YELLOW}Choisissez le type d'erreur (1/2) : {Style.RESET_ALL}")
+    print(f"\n{Fore.CYAN}Error Type : {Style.RESET_ALL}")
+    print(f"{Fore.BLUE}To check if a username is valid or nah we have to check the response codes,status,messages,etc... it's often one of these two choose one of these options and watson will check for you if there is any user existing on your target site with the response code or message displayed in.")
+    print(f"{Fore.BLUE}1. HTTP Code (default: 200 = exists, others = doesn't exists or has advandced protections (like Twitter))")
+    print(f"2. Responses Message {Style.RESET_ALL}")
+    error_type = input(f"{Fore.YELLOW}Choose one  (1/2) : {Style.RESET_ALL}")
     
     if error_type == '2':
-        error_text = input(f"{Fore.YELLOW}Texte indiquant que l'utilisateur n'existe pas : {Style.RESET_ALL}")
+        error_text = input(f"{Fore.YELLOW}Enter the message that will show if the user exists on the platform here :  {Style.RESET_ALL}")
         error = {"response_text": error_text}
     else:
         # Par défaut, utiliser le code HTTP
         error = "code"
     
     # Afficher les catégories disponibles pour référence
-    print(f"\n{Fore.CYAN}Catégories communes:{Style.RESET_ALL}")
+    print(f"\n{Fore.CYAN}Category : {Style.RESET_ALL}")
     # Récupérer les catégories existantes si possible
     categories = set()
     try:
-        with open('watson/ressources/sites.json', 'r') as f:
+        with open('./watson/ressources/sites.json', 'r') as f:
             data = json.load(f)
             for site_data in data['sites'].values():
                 categories.add(site_data['category'])
@@ -1409,11 +1437,11 @@ def add_user_site():
     for i, category in enumerate(sorted(categories), 1):
         print(f"{Fore.BLUE}{i}. {category}{Style.RESET_ALL}")
     
-    category = input(f"{Fore.YELLOW}Catégorie (vous pouvez saisir une nouvelle catégorie) : {Style.RESET_ALL}")
+    category = input(f"{Fore.YELLOW}Categories : You can enter a new category which will be savec in your watson tool. {Style.RESET_ALL}")
     if not category:
         category = "other"  # Catégorie par défaut si vide
     
-    message = input(f"{Fore.YELLOW}Message personnalisé (optionnel) : {Style.RESET_ALL}")
+    message = input(f"{Fore.YELLOW}Personnal message (will be displayed in the terminal if the target is found) : {Style.RESET_ALL}")
     
     # Créer l'entrée du site
     site_data = {
@@ -1432,17 +1460,17 @@ def add_user_site():
     with open(user_sites_path, 'w') as f:
         json.dump(user_sites, f, indent=4)
     
-    print(f"\n{Fore.GREEN}{Style.BRIGHT}Site '{site_name}' ajouté avec succès !{Style.RESET_ALL}")
+    print(f"\n{Fore.GREEN}{Style.BRIGHT}Site '{site_name}' successfully added !{Style.RESET_ALL}")
     print(f"Configuration sauvegardée dans: {user_sites_path}")
 
 def delete_user_site():
     """Permet à l'utilisateur de supprimer un site personnalisé par son nom"""
-    print(f"\n{Fore.CYAN}{Style.BRIGHT}=== Suppression de site personnalisé ==={Style.RESET_ALL}\n")
+    print(f"\n{Fore.CYAN}{Style.BRIGHT}=== Deleting Personnal Site ==={Style.RESET_ALL}\n")
     
     # Vérifier l'existence du fichier de configuration utilisateur
     user_sites_path = 'watson/userConfig/user_sites.json'
     if not os.path.exists(user_sites_path):
-        print(f"{Fore.RED}Erreur: Aucun fichier de configuration utilisateur trouvé.{Style.RESET_ALL}")
+        print(f"{Fore.RED}No users config file found.{Style.RESET_ALL}")
         return
     
     # Charger les sites existants
@@ -1457,16 +1485,16 @@ def delete_user_site():
                 sites_dict = user_sites
                 user_sites = {'sites': sites_dict}
     except Exception as e:
-        print(f"{Fore.RED}Erreur lors du chargement des sites utilisateur: {e}{Style.RESET_ALL}")
+        print(f"{Fore.RED}Erreur while loading users sites: {e}{Style.RESET_ALL}")
         return
     
     # Vérifier s'il y a des sites à supprimer
     if not sites_dict:
-        print(f"{Fore.YELLOW}Aucun site personnalisé trouvé.{Style.RESET_ALL}")
+        print(f"{Fore.YELLOW}No perosnnal sites found.{Style.RESET_ALL}")
         return
     
     # Afficher les sites disponibles
-    print(f"{Fore.CYAN}Sites personnalisés disponibles:{Style.RESET_ALL}")
+    print(f"{Fore.CYAN}Available sites :{Style.RESET_ALL}")
     site_names = []
     for url, site_data in sites_dict.items():
         site_name = site_data.get('name')
@@ -1474,7 +1502,7 @@ def delete_user_site():
         print(f"{Fore.BLUE}- {site_name} ({url}){Style.RESET_ALL}")
     
     # Demander le nom du site à supprimer
-    site_to_delete = input(f"\n{Fore.YELLOW}Nom du site à supprimer : {Style.RESET_ALL}")
+    site_to_delete = input(f"\n{Fore.YELLOW}Site to delete : {Style.RESET_ALL}")
     
     # Chercher et supprimer le site
     found = False
@@ -1486,7 +1514,7 @@ def delete_user_site():
             found = True
     
     if not found:
-        print(f"{Fore.RED}Erreur: Aucun site nommé '{site_to_delete}' n'a été trouvé.{Style.RESET_ALL}")
+        print(f"{Fore.RED}Error: No site named '{site_to_delete}' was found.{Style.RESET_ALL}")
         return
     
     # Supprimer les sites trouvés
@@ -1498,16 +1526,17 @@ def delete_user_site():
         json.dump(user_sites, f, indent=4)
     
     count = len(urls_to_delete)
-    print(f"\n{Fore.GREEN}{Style.BRIGHT}{count} site(s) nommé(s) '{site_to_delete}' supprimé(s) avec succès !{Style.RESET_ALL}")
+    print(f"\n{Fore.GREEN}{Style.BRIGHT}{count} site(s) named '{site_to_delete}' successfully deleted !{Style.RESET_ALL}")
 
 def configure_api_key(api_type, api_key):
     """Configure une clé API dans le fichier apikeys.json"""
-    api_file_path = "watson/ressources/apikeys.json"
+    api_file_path = get_resource_path("ressources/apikeys.json")
     
     # Vérifier si le dossier ressources existe
-    if not os.path.exists("watson/ressources"):
+    resource_dir = get_resource_path("ressources")
+    if not os.path.exists(resource_dir):
         try:
-            os.makedirs("watson/ressources")
+            os.makedirs(resource_dir)
             print(f"{Fore.GREEN}Répertoire 'ressources' créé avec succès.{Style.RESET_ALL}")
         except Exception as e:
             print(f"{Fore.RED}Erreur lors de la création du répertoire 'ressources': {str(e)}{Style.RESET_ALL}")
@@ -1609,6 +1638,15 @@ def main():
         configure_api_key(api_type, api_key)
         return
     
+    if args.username and args.buster:
+        if not args.file:
+            print(f"{Fore.RED}Error: You must specify a URL list file with -f when using --buster{Style.RESET_ALL}")
+            return
+        if not args.speed:
+            print(f"{Fore.RED}Error: You must specify a speed with --speed fast|slow when using --buster{Style.RESET_ALL}")
+            return
+
+    
     # Vérifier si un nom d'utilisateur a été fourni
     if not args.username:
         parser.print_help()
@@ -1617,14 +1655,32 @@ def main():
     username = args.username
     
     # Afficher le logo et les informations de démarrage
-    print(f"{Fore.GREEN}{Style.BRIGHT}")
+                                                                           
+    print(f"{Fore.GREEN}{Style.BRIGHT}")                                                           
+    print("                                  ")
+    print("           .---.               ___                                     ")
+    print("          /. ./|             ,--.'|_                                   ")
+    print("      .--'.  ' ;             |  | :,'              ,---.        ,---,  ")
+    print("     /__./ \\ : |             :  : ' :  .--.--.    '   ,'\\   ,-+-. /  | ")
+    print(" .--'.  '   \\' .  ,--.--.  .;__,'  /  /  /    '  /   /   | ,--.'|'   | ")
+    print("/___/ \\ |    ' ' /       \\ |  |   |  |  :  /`./ .   ; ,. :|   |  ,\"' | ")
+    print(";   \\  \\;      :.--.  .-. |:__,'| :  |  :  ;_   '   | |: :|   | /  | | ")
+    print(" \\   ;  `      | \\__\\/: . .  '  : |__ \\  \\    `.'   | .; :|   | |  | | ")
+    print("  .   \\    .\\  ; ,\" .--.; |  |  | '.'| `----.   \\   :    ||   | |  |/  ")
+    print("   \\   \\   ' \\ |/  /  ,.  |  ;  :    ;/  /`--'  /\\   \\  / |   | |--'   ")
+    print("    :   '  |--\\\";  :   .'   \\ |  ,   /'--'.     /  `----'  |   |/       ")
+    print("     \\   \\ ;   |  ,     .-./  ---`-'   `--'---'           '---'        ")
+    print("      '---\"     `--`---'                                               ")
+    print(f"{Fore.WHITE}{Style.BRIGHT}[+] Watson v0.2 - margoul1{Style.RESET_ALL}")
+                                                     
+    """ print(f"{Fore.GREEN}{Style.BRIGHT}")
     print(" _       __      __                   ")
     print("| |     / /___ _/ /________  ____    ")
     print("| | /| / / __ `/ __/ ___/ / / / _ \\ ")
     print("| |/ |/ / /_/ / /_(__  ) /_/ /  __/  ")
     print("|__/|__/\\__,_/\\__/____/\\__,_/\\___/ ")
     print(f"{Style.RESET_ALL}")
-    print(f"{Fore.WHITE}{Style.BRIGHT}[+] Watson v0.1 - GodEyes OSINT Team{Style.RESET_ALL}")
+    print(f"{Fore.WHITE}{Style.BRIGHT}[+] Watson v0.1 - GodEyes OSINT Team{Style.RESET_ALL}") """
     
     # Vérification avec check_username_exists pour les services spécifiques
     check_username_exists(username, args.positive)

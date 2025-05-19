@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "watson-osint"
-version = "0.1.1"
-description = "Watson OSINT - Un outil puissant pour rechercher des noms d'utilisateur sur de multiples plateformes"
+version = "0.1.9"
+description = "Watson - Powerful username search engine"
 readme = "README.md"
 authors = [
-    {name = "margoul1", email = "votre.email@example.com"}
+    {name = "margoul1", email = "github.pydoctor@gmail.com"}
 ]
 license = {file = "LICENSE"}
 classifiers = [

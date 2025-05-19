@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="watson-osint",
-    version="0.1.1",
+    version="0.1.9",
     author="margoul1",
     author_email="github.pydoctor@gmail.com",
     description="Watson OSINT - A powerful tool to search for usernames on multiple platforms",

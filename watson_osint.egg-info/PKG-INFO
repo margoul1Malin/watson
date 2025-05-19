@@ -1,10 +1,10 @@
 Metadata-Version: 2.4
 Name: watson-osint
-Version: 0.1.1
-Summary: Watson OSINT - Un outil puissant pour rechercher des noms d'utilisateur sur de multiples plateformes
+Version: 0.1.9
+Summary: Watson - Powerful username search engine
 Home-page: https://github.com/margoul1/watson
 Author: margoul1
-Author-email: margoul1 <votre.email@example.com>
+Author-email: margoul1 <github.pydoctor@gmail.com>
 License: MIT License
         
         Copyright (c) 2024 margoul1
@@ -55,9 +55,8 @@ Dynamic: requires-python
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Watson OSINT est un outil puissant pour rechercher des noms d'utilisateur sur de multiples plateformes en ligne. Il permet de détecter rapidement la présence d'un utilisateur sur différents sites web, réseaux sociaux et plateformes.
-
-## Fonctionnalités
+Watson is a powerful search engine for usernames on many platforms which allow you to add your own targets with automated scans and json reports. 
+## Functions
 
 - Search for usernames comprehensively (Response Status, Response Core, Response Time, XHR Calls, API, etc..)
 - Results in real-time, works well with the godsEye Project
@@ -73,7 +72,7 @@ pip install watson-osint
 Clone git repository : 
 
 ```bash
-git clone https://github.com/margoul1/watson.git
+git clone https://github.com/margoul1Malin/watson.git
 cd watson
 pip install -e .
 ```

@@ -1,0 +1,487 @@
+{
+    "sites": {
+        "https://op.gg/summoners/euw/{}-EUW": {
+            "name": "League of Legends",
+            "error": "code",
+            "category": "gaming"
+        },
+        "https://github.com/{}": {
+            "name": "GitHub",
+            "error": "code",
+            "category": "development"
+        },
+        "https://gitlab.com/{}": {
+            "name": "GitLab",
+            "error": "code",
+            "category": "development"
+        },
+        "https://www.linkedin.com/in/{}": {
+            "name": "LinkedIn",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.snapchat.com/add/{}": {
+            "name": "Snapchat",
+            "error": "code",
+            "category": "social"
+        },
+        "https://9gag.com/u/{}": {
+            "name": "9GAG",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.buymeacoffee.com/{}": {
+            "name": "Buy Me a Coffee",
+            "error": "code",
+            "category": "finance"
+        },
+        "https://community.brave.com/u/{}/": {
+            "name": "Brave Community",
+            "error": "code",
+            "category": "forum"
+        },
+        "https://chaturbate.com/{}": {
+            "name": "Chaturbate",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://chaos.social/@{}": {
+            "name": "Chaos",
+            "error": "code",
+            "category": "social",
+            "servers": ["fosstodon.org","@piaille.fr", "@framapiaf.org", "@urusai.social", "@mstdn.social", "@noc.social", "@mastodon.social", "@flipboard.com", "@mastoxiv.page", "@pubeurope.com", "@mamot.fr", "@bsky.brid.gy", "@lgbtqia.space", "@rockosbasilik.com" ]
+        },
+        "https://profil.chatujme.cz/{}": {
+            "name": "Chatujme",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.chess.com/member/{}": {
+            "name": "Chess",
+            "error": "code",
+            "category": "gaming"
+        },
+        "https://community.cloudflare.com/u/{}": {
+            "name": "Cloudflare Community",
+            "error": "code",
+            "category": "social"
+        },
+        "https://codesnippets.fandom.com/wiki/User:{}": {
+            "name": "Fandom",
+            "error": "code",
+            "category": "social"
+        },
+        "https://codeberg.org/{}": {
+            "name": "Codeberg",
+            "error": "code",
+            "category": "social"
+        },
+        "https://{}.crevado.com": {
+            "name": "Crevado",
+            "error": "code",
+            "category": "hosting"
+        },
+        "https://crowdin.com/profile/{}": {
+            "name": "Crowdin",
+            "error": "code",
+            "category": "hosting"
+        },
+        "https://www.cryptomator.org/forum/u/{}": {
+            "name": "Cryptomator Forum",
+            "error": "code",
+            "category": "social"
+        },
+        "https://cyberdefenders.org/p/{}": {
+            "name": "Cyber Defenders",
+            "error": {
+                "response_text": "{}"
+            },
+            "category": "cyber"
+        },
+        "https://www.dealabs.com/profile/{}": {
+            "name": "Dealabs",
+            "error": "code",
+            "category": "social"
+        },
+        "https://hub.docker.com/u/{}/": {
+            "name": "Docker Hub",
+            "error": "code",
+            "category": "hosting"
+        },
+        "https://dribbble.com/{}": {
+            "name": "Dribbble",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.erome.com/{}": {
+            "name": "Erome",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://{}.exposure.co/": {
+            "name": "Exposure",
+            "error": "code",
+            "category": "hosting"
+        },
+        "https://www.exophase.com/user/{}/": {
+            "name": "Exophase",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.eyeem.com/u/{}": {
+            "name": "Eyeem",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.fiverr.com/{}": {
+            "name": "Fiverr",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.flickr.com/people/{}": {
+            "name": "Flickr",
+            "error": "code",
+            "category": "hosting"
+        },
+        "https://fortnitetracker.com/profile/all/{}": {
+            "name": "Fortnite Tracker",
+            "error": "code",
+            "category": "gaming"
+        },
+        "https://tracker.gg/valorant/profile/riot/{}%23EUW/overview": {
+            "name": "Tracker.gg",
+            "error": "code",
+            "category": "gaming"
+        },
+        "https://fosstodon.org/@username": {
+            "name": "Fosstodon",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.freelancer.com/u/{}": {
+            "name": "Freelancer",
+            "error": "code",
+            "category": "work"
+        },
+        "https://gitlab.gnome.org/{}": {
+            "name": "GitLab GNOME",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.geeksforgeeks.org/user/{}": {
+            "name": "GeeksforGeeks",
+            "error": "code",
+            "category": "social"
+        },
+        "https://{}.gitbook.io/": {
+            "name": "GitBook",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.goodreads.com/{}": {
+            "name": "Goodreads",
+            "error": "code",
+            "category": "social"    
+        },
+        "https://gitea.com/{}": {
+            "name": "Gitea",
+            "error": "code",
+            "category": "development"    
+        },
+        "https://gitee.com/{}": {
+            "name": "Gitee",
+            "error": "code",
+            "category": "development"
+        },
+        "https://www.grailed.com/{}": {
+            "name": "Grailed",
+            "error": "code",
+            "category": "social"
+        },
+        "https://play.google.com/store/apps/developer?id={}": {
+            "name": "Google Play Developer",
+            "error": "code",
+            "category": "hosting"
+        },
+        "https://forum.hackthebox.com/u/{}": {
+            "name": "Hack The Box Forum",
+            "error": "code",
+            "category": "cyber"
+        },
+        "https://hackaday.io/{}": {
+            "name": "Hackaday",
+            "error": "code",
+            "category": "cyber"
+        },
+        "https://hackenproof.com/hackers/{}": {
+            "name": "Hackenproof",
+            "error": "code",
+            "category": "cyber"
+        },
+        "https://hackerone.com/{}": {
+            "name": "HackerOne",
+            "error": "code",
+            "category": "cyber"
+        },
+        "https://keybase.io/{}": {
+            "name": "Keybase",
+            "error": "code",
+            "category": "social"
+        },
+        "https://kick.com/{}": {
+            "name": "Kick",
+            "error": "code",
+            "category": "social"
+        },
+        "https://api.mojang.com/users/profiles/minecraft/{}": {
+            "name": "Minecraft",
+            "error": "code",
+            "category": "gaming"
+        },
+        "https://www.mixcloud.com/{}": {
+            "name": "Mixcloud",
+            "error": "code",
+            "category": "social"
+        },
+        "https://myspace.com/{}": {
+            "name": "Myspace",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.native-instruments.com/forum/profile/{}": {
+            "name": "Native Instruments Forum",
+            "error": "code",
+            "category": "social"
+        },
+        "https://nationstates.net/nation={}": {
+            "name": "NationStates",
+            "error": "code",
+            "category": "social"
+        },
+        "https://pastebin.com/u/{}": {
+            "name": "Pastebin",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.patreon.com/{}": {
+            "name": "Patreon",
+            "error": "code",
+            "category": "finance"
+        },
+        "https://www.periscope.tv/{}": {
+            "name": "Periscope",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.pixiv.net/users/{}": {
+            "name": "Pixiv",
+            "error": "code",
+            "category": "social"    
+        },
+        "https://pornhub.com/users/{}": {
+            "name": "Pornhub",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://www.redtube.com/users/{}": {
+            "name": "Redtube",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://www.roblox.com/user.aspx?username={}": {
+            "name": "Roblox",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.rockettube.com/{}": {
+            "name": "Rockettube",
+            "error": "code",
+            "category": "adults",
+            "message": "Haha ! U Gay Muthafucka ! Looser ¡"
+        },
+        "https://royalcams.com/profile/{}": {
+            "name": "Royalcams",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://rumble.com/user/{}": {
+            "name": "Rumble",
+            "error": "code",
+            "category": "gaming"
+        },
+        "https://www.soundcloud.com/{}": {
+            "name": "Soundcloud",
+            "error": "code",
+            "category": "social",
+            "message": "U so old waw."
+        },
+        "https://open.spotify.com/user/{}": {
+            "name": "Spotify",
+            "error": "code",
+            "category": "social",
+            "message": "Deezer > Spotify."
+        },
+        "https://www.strava.com/athletes/{}": {
+            "name": "Strava",
+            "error": "code",
+            "category": "social",
+            "message": "This men is dangerous don't try to contact him."
+        },
+        "https://t.me/{}": {
+            "name": "Telegram",
+            "error": {
+                "response_text": "If you have"
+            },
+            "category": "social",
+            "message": "Does he really thinks telegram is a private platform?¿"
+        },
+        "https://unsplash.com/@{}": {
+            "name": "Unsplash",
+            "error": "code",
+            "category": "social"
+        },
+        "https://vimeo.com/{}": {
+            "name": "Vimeo",
+            "error": "code",
+            "category": "social",
+            "message": "Dinosaurus ?"
+        },
+        "https://www.virustotal.com/ui/users/{}/avatar": {
+            "name": "VirusTotal",
+            "error": "code",
+            "category": "cyber",
+            "message": "<- Fuck VirusTotal they make my work harder everyday."
+        },
+        "https://www.wattpad.com/user/{}": {
+            "name": "Wattpad",
+            "error": "code",
+            "category": "social"
+        },
+        "https://profiles.wordpress.org/{}/": {
+            "name": "WordPress",
+            "error": "code",
+            "category": "website"
+        },
+        "https://xboxgamertag.com/search/{}": {
+            "name": "Xbox Gamertag",
+            "error": "code",
+            "category": "gaming",
+            "message": "Why buy a Xbox when PlayStation exists ?"
+        },
+        "https://xvideos.com/profiles/{}": {
+            "name": "Xvideos",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://youporn.com/uservids/{}": {
+            "name": "YouPorn",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://habr.com/ru/users/{}": {
+            "name": "Habr",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.hackster.io/{}": {
+            "name": "Hackster",
+            "error": "code",
+            "category": "cyber"
+        },
+        "https://mastodon.cloud/@{}": {
+            "name": "Mastodon Cloud",
+            "error": "code",
+            "category": "social"
+        },
+        "https://mastodon.social/@{}": {
+            "name": "Mastodon Social",
+            "error": "code",
+            "category": "social"
+        },
+        "https://mastodon.xyz/@{}": {
+            "name": "Mastodon XYZ",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.npmjs.com/~{}": {
+            "name": "npm",
+            "error": "code",
+            "category": "development"
+        },
+        "https://{}.omg.lol": {
+            "name": "OMG.lol",
+            "error": "code",
+            "category": "hosting"
+        },
+        "https://osu.ppy.sh/users/{}": {
+            "name": "osu!",
+            "error": "code",
+            "category": "gaming"
+        },
+        "https://xhamster.com/users/{}": {
+            "name": "XHamster",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://tumblr.com/{}": {
+            "name": "Tumblr",
+            "error": "code",
+            "category": "social"
+        },
+        "https://vk.com/{}": {
+            "name": "VKontakte (VK)",
+            "error": "code",
+            "category": "social"
+        },
+        "https://gist.github.com/{}": {
+            "name": "Github [Gist]",
+            "error": "code",
+            "category": "development"
+        },
+        "https://tripadvisor.com/members/{}": {
+            "name": "TripAdvisor",
+            "error": "code",
+            "category": "social"
+        },
+        "https://www.eporner.com/profile/{}": {
+            "name": "Eporner",
+            "error": "code",
+            "category": "adults",
+            "message": "little rascal"
+        },
+        "https://www.gog.com/u/{}": {
+            "name": "GOG",
+            "error": "code",
+            "category": "social"
+        },
+        "https://pokemonshowdown.com/users/{}": {
+            "name": "Pokemon Showdown",
+            "error": "code",
+            "category": "gaming"
+        },
+        "https://{}.itch.io/": {
+            "name": "Itch.io",
+            "error": "code",
+            "category": "social"
+        },
+        "https://flipboard.com/@{}": {
+            "name": "Flipboard",
+            "error": "code",
+            "category": "social"
+        },
+        "https://forums.kali.org/u/{}/summary": {
+            "name": "Kali Forums",
+            "error": "code",
+            "category": "cyber"
+        }
+    }
+}
+
